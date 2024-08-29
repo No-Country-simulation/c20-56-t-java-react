@@ -2,6 +2,9 @@ package com.nocountry.petadoptapi.model;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "shelters")
 public class Shelter {
@@ -10,6 +13,10 @@ public class Shelter {
     private Integer id;
     private String shelterName;
     private String address;
+    private String contact;
+    private String description;
+    @OneToMany(mappedBy = "shelter", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Pet> petsForAdoption = new HashSet<>();
     @OneToOne(mappedBy = "shelterProfile", cascade = CascadeType.ALL)
     private User user;
 
@@ -38,6 +45,30 @@ public class Shelter {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getContact() {
+        return contact;
+    }
+
+    public void setContact(String contact) {
+        this.contact = contact;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Set<Pet> getPetsForAdoption() {
+        return petsForAdoption;
+    }
+
+    public void setPetsForAdoption(Set<Pet> petsForAdoption) {
+        this.petsForAdoption = petsForAdoption;
     }
 
     public User getUser() {
