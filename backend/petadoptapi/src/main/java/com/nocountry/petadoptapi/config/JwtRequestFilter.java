@@ -1,6 +1,7 @@
 package com.nocountry.petadoptapi.config;
 
 import com.nocountry.petadoptapi.service.AuthService;
+import com.nocountry.petadoptapi.service.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

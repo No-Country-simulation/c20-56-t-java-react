@@ -1,16 +1,16 @@
-package com.nocountry.petadoptapi.config;
+package com.nocountry.petadoptapi.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component
+@Service
 public class JwtUtil {
     private final String SECRET_KEY = "d2d4a244e1c663e7bb768c0d327e6542755c280e839605d4a983ad316420c616";
 

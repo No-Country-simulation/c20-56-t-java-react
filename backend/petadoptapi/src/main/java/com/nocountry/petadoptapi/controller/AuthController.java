@@ -1,6 +1,6 @@
 package com.nocountry.petadoptapi.controller;
 
-import com.nocountry.petadoptapi.config.JwtUtil;
+import com.nocountry.petadoptapi.service.JwtUtil;
 import com.nocountry.petadoptapi.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
