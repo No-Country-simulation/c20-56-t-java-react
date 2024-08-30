@@ -1,13 +1,11 @@
 package com.nocountry.petadoptapi.controller;
 
-import com.nocountry.petadoptapi.service.JwtUtil;
-import com.nocountry.petadoptapi.service.AuthService;
+import com.nocountry.petadoptapi.requests.AuthRequest;
+import com.nocountry.petadoptapi.service.UserService;
+import com.nocountry.petadoptapi.exceptions.UserAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -17,53 +15,29 @@ import java.util.Map;
 @RequestMapping("/api")
 public class AuthController {
     @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private AuthService authService;
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody Credential credential) {
-        if (authService.existsByEmail(credential.email())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body("Error: Username is already taken!");
+    public ResponseEntity<?> registerUser(@RequestBody AuthRequest authRequest) {
+        try {
+            userService.registerUser(authRequest);
+            return ResponseEntity.ok("User registered successfully!");
+        } catch (UserAlreadyExistsException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred during registration.");
         }
-
-        String email = credential.email();
-        String password = passwordEncoder.encode(credential.password());
-
-        authService.registerUser(email, password);
-
-        return ResponseEntity.ok("User registered successfully!");
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody Credential credential) throws Exception {
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthRequest authRequest) {
         try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(credential.email(), credential.password())
-            );
+            String jwt = userService.authenticate(authRequest);
+            Map<String, String> response = new HashMap<>();
+            response.put("token", jwt);
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            throw new Exception("Incorrect username or password", e);
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-
-        final UserDetails userDetails = authService.loadUserByUsername(credential.email());
-        final String jwt = jwtUtil.generateToken(userDetails.getUsername());
-
-        Map<String, String> response = new HashMap<>();
-        response.put("token", jwt);
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/secure")
-    public ResponseEntity<?> testEndpoint() {
-        return ResponseEntity.ok("Hello from secure endpoint!");
     }
 }

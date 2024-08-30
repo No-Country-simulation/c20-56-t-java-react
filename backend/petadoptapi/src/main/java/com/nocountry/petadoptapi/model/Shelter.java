@@ -17,8 +17,6 @@ public class Shelter {
     private String description;
     @OneToMany(mappedBy = "shelter", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Pet> petsForAdoption = new HashSet<>();
-    @OneToOne(mappedBy = "shelterProfile", cascade = CascadeType.ALL)
-    private User user;
 
     public Shelter() {
     }
@@ -69,13 +67,5 @@ public class Shelter {
 
     public void setPetsForAdoption(Set<Pet> petsForAdoption) {
         this.petsForAdoption = petsForAdoption;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 }

@@ -1,7 +1,6 @@
 package com.nocountry.petadoptapi.config;
 
-import com.nocountry.petadoptapi.service.AuthService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.nocountry.petadoptapi.service.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,13 +12,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class AppConfig {
-    @Autowired
-    private AuthService authService;
+    private final UserDetailsServiceImpl userDetails;
+
+    public AppConfig(UserDetailsServiceImpl userDetails) {
+        this.userDetails = userDetails;
+    }
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(authService);
+        authProvider.setUserDetailsService(userDetails);
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }

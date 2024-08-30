@@ -16,8 +16,6 @@ public class Adopter {
     private String address;
     private String contact;
     private String description;
-    @OneToOne(mappedBy = "adopterProfile", cascade = CascadeType.ALL)
-    private User user;
     @ManyToMany(mappedBy = "interestedAdopters", fetch = FetchType.LAZY)
     private Set<Pet> wishList = new HashSet<>();
 
@@ -70,14 +68,6 @@ public class Adopter {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public Set<Pet> getWishList() {
