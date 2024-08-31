@@ -33,7 +33,6 @@ public class AdopterController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-
     }
 
     @PostMapping("/create")
@@ -53,11 +52,11 @@ public class AdopterController {
         try {
             Adopter adopter = adopterService.updateAdopter(adopterDto);
             AdopterDto response = new AdopterDto(
-                    adopterDto.firstName(),
-                    adopterDto.lastName(),
-                    adopterDto.address(),
-                    adopterDto.contact(),
-                    adopterDto.description()
+                    adopter.getFirstName(),
+                    adopter.getLastName(),
+                    adopter.getAddress(),
+                    adopter.getContact(),
+                    adopter.getDescription()
             );
             return ResponseEntity.ok(response);
         } catch (Exception e) {

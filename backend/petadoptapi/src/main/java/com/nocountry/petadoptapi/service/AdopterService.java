@@ -9,6 +9,7 @@ import com.nocountry.petadoptapi.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Set;
 
 @Service
@@ -29,7 +30,7 @@ public class AdopterService {
         UserDetails userDetails = userService.getAuthenticatedUser();
         User user = (User) userDetails;
         if (user.getAdopterProfile() == null) {
-            throw new IllegalStateException("User already has no adopter profile.");
+            throw new IllegalStateException("User has no adopter profile.");
         }
         return user.getAdopterProfile();
     }
@@ -63,7 +64,7 @@ public class AdopterService {
         User user = (User) userDetails;
         Integer adopterId = user.getAdopterProfile().getId();
 
-        if (user.getAdopterProfile() == null || user.getAdopterProfile().getId() != adopterId) {
+        if (user.getAdopterProfile() == null || !Objects.equals(user.getAdopterProfile().getId(), adopterId)) {
             throw new IllegalStateException("User does not have an adopter profile or the profile ID does not match.");
         }
 
