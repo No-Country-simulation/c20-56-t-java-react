@@ -67,6 +67,19 @@ public class UserService {
         return jwtUtil.generateToken(user);
     }
 
+    public String switchRole(Role newActiveRole) {
+        User user = (User) getAuthenticatedUser();
+        if (newActiveRole == null) {
+            throw new IllegalArgumentException("New active role cannot be null");
+        }
+        if (!user.getRoles().contains(newActiveRole)) {
+            throw new IllegalArgumentException("Invalid role: " + newActiveRole);
+        }
+        user.setActiveRole(newActiveRole);
+        userRepository.save(user);
+        return jwtUtil.generateToken(user);
+    }
+
     public UserDetails getAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {

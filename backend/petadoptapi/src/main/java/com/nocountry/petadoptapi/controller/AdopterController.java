@@ -47,7 +47,7 @@ public class AdopterController {
         }
     }
 
-    @PostMapping("/update")
+    @PutMapping("/update")
     public ResponseEntity<?> updateAdopter(@RequestBody AdopterDto adopterDto) {
         try {
             Adopter adopter = adopterService.updateAdopter(adopterDto);

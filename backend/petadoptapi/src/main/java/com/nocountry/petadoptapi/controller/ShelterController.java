@@ -46,7 +46,7 @@ public class ShelterController {
         }
     }
 
-    @PostMapping("/update")
+    @PutMapping("/update")
     public ResponseEntity<?> updateShelter(@RequestBody ShelterDto shelterDto) {
         try {
             Shelter shelter = shelterService.updateShelter(shelterDto);
