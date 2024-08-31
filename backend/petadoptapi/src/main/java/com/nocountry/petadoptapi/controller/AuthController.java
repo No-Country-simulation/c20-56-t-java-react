@@ -1,8 +1,10 @@
 package com.nocountry.petadoptapi.controller;
 
 import com.nocountry.petadoptapi.requests.AuthRequest;
+import com.nocountry.petadoptapi.service.JwtUtil;
 import com.nocountry.petadoptapi.service.UserService;
 import com.nocountry.petadoptapi.exceptions.UserAlreadyExistsException;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +16,13 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")
 public class AuthController {
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+    private final JwtUtil jwtUtil;
+
+    public AuthController(UserService userService, JwtUtil jwtUtil) {
+        this.userService = userService;
+        this.jwtUtil = jwtUtil;
+    }
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody AuthRequest authRequest) {
@@ -39,5 +46,18 @@ public class AuthController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    /*
+    * Solo para testeo.
+    * Hay que eliminarlo.
+    */
+    @GetMapping("/claims")
+    public Claims testClaims(@RequestHeader("Authorization") String token) {
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+
+        return jwtUtil.extractAllClaims(token);
     }
 }

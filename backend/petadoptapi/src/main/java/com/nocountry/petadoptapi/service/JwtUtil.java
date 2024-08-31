@@ -1,5 +1,6 @@
 package com.nocountry.petadoptapi.service;
 
+import com.nocountry.petadoptapi.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -16,8 +17,10 @@ public class JwtUtil {
     private final String SECRET_KEY = "d2d4a244e1c663e7bb768c0d327e6542755c280e839605d4a983ad316420c616";
 
     public String generateToken(UserDetails userDetails) {
+        User user = (User) userDetails;
         Map<String, Object> claims = new HashMap<>();
-        claims.put("roles", userDetails.getAuthorities().stream()
+        claims.put("activeRole", user.getActiveRole().name());
+        claims.put("roles", user.getAuthorities().stream()
                 .map(grantedAuthority -> grantedAuthority.getAuthority())
                 .collect(Collectors.toList()));
 
