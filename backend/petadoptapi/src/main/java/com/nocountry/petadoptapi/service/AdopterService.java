@@ -25,6 +25,15 @@ public class AdopterService {
         this.jwtUtil = jwtUtil;
     }
 
+    public Adopter getAdopter() {
+        UserDetails userDetails = userService.getAuthenticatedUser();
+        User user = (User) userDetails;
+        if (user.getAdopterProfile() == null) {
+            throw new IllegalStateException("User already has no adopter profile.");
+        }
+        return user.getAdopterProfile();
+    }
+
     public String saveAdopter(AdopterDto adopterDto) {
         UserDetails userDetails = userService.getAuthenticatedUser();
         User user = (User) userDetails;

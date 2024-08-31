@@ -18,6 +18,24 @@ public class AdopterController {
         this.adopterService = adopterService;
     }
 
+    @GetMapping
+    public ResponseEntity<?> readAdopter() {
+        try {
+            Adopter adopter = adopterService.getAdopter();
+            AdopterDto response = new AdopterDto(
+                    adopter.getFirstName(),
+                    adopter.getLastName(),
+                    adopter.getAddress(),
+                    adopter.getContact(),
+                    adopter.getDescription()
+            );
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
+    }
+
     @PostMapping("/create")
     public ResponseEntity<?> createAdopter(@RequestBody AdopterDto adopterDto) {
         try {
@@ -35,7 +53,7 @@ public class AdopterController {
         try {
             Adopter adopter = adopterService.updateAdopter(adopterDto);
             AdopterDto response = new AdopterDto(
-                    adopter.getFirstName(),
+                    adopterDto.firstName(),
                     adopterDto.lastName(),
                     adopterDto.address(),
                     adopterDto.contact(),
