@@ -9,14 +9,19 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class JwtUtil {
     private final String SECRET_KEY = "d2d4a244e1c663e7bb768c0d327e6542755c280e839605d4a983ad316420c616";
 
-    public String generateToken(String username) {
+    public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, username);
+        claims.put("roles", userDetails.getAuthorities().stream()
+                .map(grantedAuthority -> grantedAuthority.getAuthority())
+                .collect(Collectors.toList()));
+
+        return createToken(claims, userDetails.getUsername());
     }
 
     private String createToken(Map<String, Object> claims, String subject) {
@@ -38,7 +43,7 @@ public class JwtUtil {
         return extractAllClaims(token).getSubject();
     }
 
-    private Claims extractAllClaims(String token) {
+    public Claims extractAllClaims(String token) {
         return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
     }
 

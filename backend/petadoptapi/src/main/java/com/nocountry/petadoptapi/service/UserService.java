@@ -1,5 +1,6 @@
 package com.nocountry.petadoptapi.service;
 
+import com.nocountry.petadoptapi.model.Role;
 import com.nocountry.petadoptapi.requests.AuthRequest;
 import com.nocountry.petadoptapi.exceptions.UserAlreadyExistsException;
 import com.nocountry.petadoptapi.model.User;
@@ -13,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UserService {
@@ -44,6 +46,9 @@ public class UserService {
         User user = new User();
         user.setEmail(email);
         user.setPassword(password);
+        Set<Role> roles = user.getRoles();
+        roles.add(Role.USER);
+        user.setRoles(roles);
         userRepository.save(user);
     }
 
@@ -58,7 +63,8 @@ public class UserService {
         }
 
         final UserDetails user = userDetails.loadUserByUsername(authRequest.email());
-        return jwtUtil.generateToken(user.getUsername());
+        System.out.println("Roles del usuario: " + user.getAuthorities());
+        return jwtUtil.generateToken(user);
     }
 
     public UserDetails getAuthenticatedUser() {
