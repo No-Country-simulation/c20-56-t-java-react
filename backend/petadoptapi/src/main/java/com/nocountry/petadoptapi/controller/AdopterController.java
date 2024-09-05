@@ -40,7 +40,7 @@ public class AdopterController {
         try {
             String jwt = adopterService.saveAdopter(adopterDto);
             Map<String, String> response = new HashMap<>();
-            response.put("id", jwt);
+            response.put("token", jwt);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());

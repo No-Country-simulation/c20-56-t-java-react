@@ -39,7 +39,7 @@ public class ShelterController {
         try {
             String jwt = shelterService.saveShelter(shelterDto);
             Map<String, String> response = new HashMap<>();
-            response.put("id", jwt);
+            response.put("token", jwt);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());

@@ -63,7 +63,6 @@ public class UserService {
         }
 
         final UserDetails user = userDetails.loadUserByUsername(authRequest.email());
-        System.out.println("Roles del usuario: " + user.getAuthorities());
         return jwtUtil.generateToken(user);
     }
 

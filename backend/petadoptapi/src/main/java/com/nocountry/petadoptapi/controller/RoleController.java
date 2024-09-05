@@ -1,24 +1,26 @@
 package com.nocountry.petadoptapi.controller;
 
 import com.nocountry.petadoptapi.model.Role;
+import com.nocountry.petadoptapi.service.JwtUtil;
 import com.nocountry.petadoptapi.service.UserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/api/role")
 public class RoleController {
     private final UserService userService;
+    private final JwtUtil jwtUtil;
 
-    public RoleController(UserService userService) {
+    public RoleController(UserService userService, JwtUtil jwtUtil) {
         this.userService = userService;
+        this.jwtUtil = jwtUtil;
     }
 
-    @PutMapping("/api/switch-role/{role}")
+    @PutMapping("/switch/{role}")
     public ResponseEntity<?> switchRole(@PathVariable Role role) {
         try {
             String jwt = userService.switchRole(role);
