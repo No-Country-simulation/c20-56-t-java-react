@@ -46,7 +46,7 @@ const ShelterForm = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="max-w-md mx-auto mt-10 p-4 bg-white shadow-md rounded">
+        <form onSubmit={handleSubmit} className="max-w-md mx-auto mt-20 mb-20 p-4 bg-white shadow-md rounded">
             <div className="mb-4">
                 <label htmlFor="shelterName" className="block text-gray-700 font-bold mb-2">Shelter Name:</label>
                 <input

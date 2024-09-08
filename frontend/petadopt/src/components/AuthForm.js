@@ -33,7 +33,7 @@ const AuthForm = ({ mode }) => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-4 bg-white shadow-md rounded">
+    <div className="max-w-md mx-auto mt-20 mb-20 p-4 bg-white shadow-md rounded">
       <h2 className="text-2xl font-bold mb-4">{mode === 'login' ? 'Iniciar Sesión' : 'Registrarse'}</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
