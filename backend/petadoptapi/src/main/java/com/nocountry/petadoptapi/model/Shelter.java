@@ -12,6 +12,7 @@ public class Shelter {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String shelterName;
+    private String image;
     private String address;
     private String contact;
     private String description;
@@ -35,6 +36,14 @@ public class Shelter {
 
     public void setShelterName(String shelterName) {
         this.shelterName = shelterName;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public String getAddress() {

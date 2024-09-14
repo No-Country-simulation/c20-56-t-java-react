@@ -1,106 +1,177 @@
 package com.nocountry.petadoptapi.service;
 
-import com.nocountry.petadoptapi.dto.PetDto;
-import com.nocountry.petadoptapi.model.Pet;
-import com.nocountry.petadoptapi.model.Shelter;
+import com.nocountry.petadoptapi.model.*;
+import com.nocountry.petadoptapi.responses.*;
+import com.nocountry.petadoptapi.repository.AdopterRepository;
 import com.nocountry.petadoptapi.repository.PetRepository;
-import com.nocountry.petadoptapi.repository.ShelterRepository;
+import com.nocountry.petadoptapi.requests.PetRequest;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class PetService {
 
     private final PetRepository petRepository;
-    private final ShelterRepository shelterRepository;
+    private final AdopterRepository adopterRepository;
+    private final UserService userService;
+    private final ClassConverter classConverter;
 
-    public PetService(PetRepository petRepository, ShelterRepository shelterRepository) {
+    public PetService(PetRepository petRepository, AdopterRepository adopterRepository, UserService userService, ClassConverter classConverter) {
         this.petRepository = petRepository;
-        this.shelterRepository = shelterRepository;
+        this.adopterRepository = adopterRepository;
+        this.userService = userService;
+        this.classConverter = classConverter;
     }
 
     // Obtener todos los pets y convertirlos a DTO
-    public List<PetDto> getAllPets() {
+    public Set<PetResponse> getAllPets() {
+        User user = (User) userService.getAuthenticatedUser();
+        Role activeRole = user.getActiveRole();
+        if (activeRole.equals(Role.ADOPTER)) {
+            return getPetResponseForAdopters(user.getAdopterProfile());
+        }
+        if (activeRole.equals(Role.SHELTER)) {
+            return getPetResponseForShelter(user.getShelterProfile());
+        }
         return petRepository.findAll().stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
+                .map(classConverter::convertToPetResponse)
+                .collect(Collectors.toSet());
+    }
+
+    public Set<PetResponse> getShelterPets(Integer id) {
+        return petRepository.findAllByShelterId(id).stream()
+                .map(classConverter::convertToPetResponse)
+                .collect(Collectors.toSet());
     }
 
     // Obtener un pet por ID y convertirlo a DTO
-    public PetDto getPetById(Integer id) {
+    public PetResponse getPetById(Integer id) {
         Pet pet = petRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pet not found"));
-        return convertToDto(pet);
+        User user = (User) userService.getAuthenticatedUser();
+        Role activeRole = user.getActiveRole();
+        if (activeRole.equals(Role.ADOPTER)) {
+            return classConverter.convertToPetResponseForAdopter(pet, user.getAdopterProfile());
+        }
+        if (activeRole.equals(Role.SHELTER)) {
+            return classConverter.convertToPetResponseForShelter(pet);
+        }
+        return classConverter.convertToPetResponse(pet);
     }
 
     // Guardar un nuevo pet utilizando un DTO
-    public PetDto savePet(PetDto petDto) {
-        Pet pet = convertToEntity(petDto);
+    public PetResponse savePet(PetRequest petRequest) {
+        Pet pet = classConverter.convertToEntity(petRequest);
         Pet savedPet = petRepository.save(pet);
-        return convertToDto(savedPet);
+        return classConverter.convertToPetResponse(savedPet);
     }
 
     // Actualizar un pet existente por su ID
-    public PetDto updatePet(Integer id, PetDto petDto) {
+    public PetResponse updatePet(Integer id, PetRequest petRequest) throws AccessDeniedException {
         Pet existingPet = petRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pet not found"));
 
-        // Actualizar los campos del pet existente
-        existingPet.setName(petDto.name());
-        existingPet.setSpecies(petDto.species());
-        existingPet.setBreed(petDto.breed());
-        existingPet.setAge(petDto.age());
-        existingPet.setColor(petDto.color());
-        existingPet.setSize(petDto.size());
-        existingPet.setImage(petDto.image());
-        existingPet.setDescription(petDto.description());
+        User user = (User) userService.getAuthenticatedUser();
+        Shelter shelter = user.getShelterProfile();
 
-        Shelter shelter = shelterRepository.findById(petDto.shelterId())
-                .orElseThrow(() -> new RuntimeException("Shelter not found"));
-        existingPet.setShelter(shelter);
+        if (shelter == null) {
+            throw new RuntimeException("El usuario no tiene un refugio asignado");
+        }
+
+        if (existingPet.getShelter() == null || !Objects.equals(existingPet.getShelter().getId(), shelter.getId())) {
+            throw new AccessDeniedException("Pet doesn't belong to user.");
+        }
+
+        // Actualizar los campos del pet existente
+        existingPet.setName(petRequest.name());
+        existingPet.setSpecies(petRequest.species());
+        existingPet.setBreed(petRequest.breed());
+        existingPet.setAge(petRequest.age());
+        existingPet.setColor(petRequest.color());
+        existingPet.setSize(petRequest.size());
+        existingPet.setImage(petRequest.image());
+        existingPet.setDescription(petRequest.description());
 
         Pet updatedPet = petRepository.save(existingPet);
-        return convertToDto(updatedPet);
+        return classConverter.convertToPetResponse(updatedPet);
     }
 
     // Eliminar un pet por su ID
     public void deletePet(Integer id) {
+        Pet existingPet = petRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pet not found"));
+        User user = (User) userService.getAuthenticatedUser();
+        Shelter shelter = user.getShelterProfile();
+
+        if (shelter == null) {
+            throw new RuntimeException("El usuario no tiene un refugio asignado");
+        }
+
+        if (existingPet.getShelter() == null || !existingPet.getShelter().equals(shelter)) {
+            throw new AccessDeniedException("Pet doesn't belong to user.");
+        }
         petRepository.deleteById(id);
     }
 
-    // Conversión de Entity a DTO
-    private PetDto convertToDto(Pet pet) {
-        return new PetDto(
-                pet.getName(),
-                pet.getSpecies(),
-                pet.getBreed(),
-                pet.getAge(),
-                pet.getColor(),
-                pet.getSize(),
-                pet.getImage(),
-                pet.getDescription(),
-                pet.getShelter().getId()
+    // Solicitud de adopcion
+    @Transactional
+    public PetAdopterResponse adoptOrCancelPet(Integer id) {
+        User user = (User) userService.getAuthenticatedUser();
+        Adopter adopter = user.getAdopterProfile();
+
+        if (adopter == null) {
+            throw new RuntimeException("El adoptante no tiene un perfil de adoptador.");
+        }
+
+        Pet pet = petRepository.findById(id).orElseThrow(() -> new RuntimeException("Pet not found"));
+
+        Set<Pet> wishList = adopter.getWishList();
+        Set<Adopter> interestedAdopters = pet.getInterestedAdopters();
+
+        if (wishList.contains(pet) || interestedAdopters.contains(adopter)) {
+            wishList.remove(pet);
+            interestedAdopters.remove(adopter);
+        } else {
+            wishList.add(pet);
+            interestedAdopters.add(adopter);
+        }
+
+        adopterRepository.save(adopter);
+        petRepository.save(pet);
+
+        PetAdopterResponse response = new PetAdopterResponse(
+                pet.getId(),
+                adopter.getId()
         );
+
+        return response;
     }
 
-    // Conversión de DTO a Entity
-    private Pet convertToEntity(PetDto petDto) {
-        Pet pet = new Pet();
-        pet.setName(petDto.name());
-        pet.setSpecies(petDto.species());
-        pet.setBreed(petDto.breed());
-        pet.setAge(petDto.age());
-        pet.setColor(petDto.color());
-        pet.setSize(petDto.size());
-        pet.setImage(petDto.image());
-        pet.setDescription(petDto.description());
+    public Set<PetResponseForAdopters> getMyWishList() {
+        User user = (User) userService.getAuthenticatedUser();
+        Adopter adopter = user.getAdopterProfile();
+        Set<Pet> pets = petRepository.findAllByAdopterWishList(user.getAdopterProfile().getId());
+        return pets.stream()
+                .map(pet -> classConverter.convertToPetResponseForAdopter(pet, adopter))
+                .collect(Collectors.toSet());
+    }
 
-        Shelter shelter = shelterRepository.findById(petDto.shelterId())
-                .orElseThrow(() -> new RuntimeException("Shelter not found"));
-        pet.setShelter(shelter);
+    // Trae todas las mascotas en el formato adecuado para adoptantes
+    public Set<PetResponse> getPetResponseForAdopters(Adopter adopter) {
+        return petRepository.findAll().stream()
+                .map(pet -> classConverter.convertToPetResponseForAdopter(pet, adopter))
+                .collect(Collectors.toSet());
+    }
 
-        return pet;
+    // Trae solo las mascotas del refugio en el formato adecuado para refugios
+    public Set<PetResponse> getPetResponseForShelter(Shelter shelter) {
+        return petRepository.findAllByShelterId(shelter.getId()).stream()
+                .map(classConverter::convertToPetResponseForShelter)
+                .collect(Collectors.toSet());
     }
 }

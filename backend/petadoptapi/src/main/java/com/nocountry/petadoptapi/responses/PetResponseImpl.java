@@ -1,6 +1,7 @@
-package com.nocountry.petadoptapi.dto;
+package com.nocountry.petadoptapi.responses;
 
-public record PetDto(
+public record PetResponseImpl(
+        Integer id,
         String name,
         String species,
         String breed,
@@ -10,5 +11,5 @@ public record PetDto(
         String image,
         String description,
         Integer shelterId
-) {
+) implements PetResponse {
 }

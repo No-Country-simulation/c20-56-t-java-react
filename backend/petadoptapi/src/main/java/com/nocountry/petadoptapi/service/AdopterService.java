@@ -1,6 +1,6 @@
 package com.nocountry.petadoptapi.service;
 
-import com.nocountry.petadoptapi.dto.AdopterDto;
+import com.nocountry.petadoptapi.responses.AdopterResponse;
 import com.nocountry.petadoptapi.model.Adopter;
 import com.nocountry.petadoptapi.model.Role;
 import com.nocountry.petadoptapi.model.User;
@@ -35,7 +35,7 @@ public class AdopterService {
         return user.getAdopterProfile();
     }
 
-    public String saveAdopter(AdopterDto adopterDto) {
+    public String saveAdopter(AdopterResponse adopterResponse) {
         UserDetails userDetails = userService.getAuthenticatedUser();
         User user = (User) userDetails;
 
@@ -44,11 +44,11 @@ public class AdopterService {
         }
 
         Adopter adopter = new Adopter();
-        adopter.setFirstName(adopterDto.firstName());
-        adopter.setLastName(adopterDto.lastName());
-        adopter.setAddress(adopterDto.address());
-        adopter.setContact(adopterDto.contact());
-        adopter.setDescription(adopterDto.description());
+        adopter.setFirstName(adopterResponse.firstName());
+        adopter.setLastName(adopterResponse.lastName());
+        adopter.setAddress(adopterResponse.address());
+        adopter.setContact(adopterResponse.contact());
+        adopter.setDescription(adopterResponse.description());
         adopter = adopterRepository.save(adopter);
         user.setAdopterProfile(adopter);
         Set<Role> roles = user.getRoles();
@@ -59,7 +59,7 @@ public class AdopterService {
         return jwtUtil.generateToken(user);
     }
 
-    public Adopter updateAdopter(AdopterDto adopterDto) {
+    public Adopter updateAdopter(AdopterResponse adopterResponse) {
         UserDetails userDetails = userService.getAuthenticatedUser();
         User user = (User) userDetails;
         Integer adopterId = user.getAdopterProfile().getId();
@@ -71,12 +71,22 @@ public class AdopterService {
         Adopter adopter = adopterRepository.findById(adopterId)
                 .orElseThrow(() -> new IllegalArgumentException("Adopter not found with ID: " + adopterId));
 
-        adopter.setFirstName(adopterDto.firstName());
-        adopter.setLastName(adopterDto.lastName());
-        adopter.setAddress(adopterDto.address());
-        adopter.setContact(adopterDto.contact());
-        adopter.setDescription(adopterDto.description());
+        adopter.setFirstName(adopterResponse.firstName());
+        adopter.setLastName(adopterResponse.lastName());
+        adopter.setAddress(adopterResponse.address());
+        adopter.setContact(adopterResponse.contact());
+        adopter.setDescription(adopterResponse.description());
 
         return adopterRepository.save(adopter);
+    }
+
+    private AdopterResponse convertToAdopterResponse(Adopter adopter) {
+        return new AdopterResponse(
+                adopter.getFirstName(),
+                adopter.getLastName(),
+                adopter.getAddress(),
+                adopter.getContact(),
+                adopter.getDescription()
+        );
     }
 }

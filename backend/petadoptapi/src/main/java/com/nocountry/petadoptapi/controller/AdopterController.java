@@ -1,7 +1,7 @@
 package com.nocountry.petadoptapi.controller;
 
 import com.nocountry.petadoptapi.model.Adopter;
-import com.nocountry.petadoptapi.dto.AdopterDto;
+import com.nocountry.petadoptapi.responses.AdopterResponse;
 import com.nocountry.petadoptapi.service.AdopterService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,10 +19,10 @@ public class AdopterController {
     }
 
     @GetMapping
-    public ResponseEntity<?> readAdopter() {
+    public ResponseEntity<?> getAdopter() {
         try {
             Adopter adopter = adopterService.getAdopter();
-            AdopterDto response = new AdopterDto(
+            AdopterResponse response = new AdopterResponse(
                     adopter.getFirstName(),
                     adopter.getLastName(),
                     adopter.getAddress(),
@@ -36,9 +36,9 @@ public class AdopterController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> createAdopter(@RequestBody AdopterDto adopterDto) {
+    public ResponseEntity<?> createAdopter(@RequestBody AdopterResponse adopterResponse) {
         try {
-            String jwt = adopterService.saveAdopter(adopterDto);
+            String jwt = adopterService.saveAdopter(adopterResponse);
             Map<String, String> response = new HashMap<>();
             response.put("token", jwt);
             return ResponseEntity.ok(response);
@@ -48,10 +48,10 @@ public class AdopterController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<?> updateAdopter(@RequestBody AdopterDto adopterDto) {
+    public ResponseEntity<?> updateAdopter(@RequestBody AdopterResponse adopterResponse) {
         try {
-            Adopter adopter = adopterService.updateAdopter(adopterDto);
-            AdopterDto response = new AdopterDto(
+            Adopter adopter = adopterService.updateAdopter(adopterResponse);
+            AdopterResponse response = new AdopterResponse(
                     adopter.getFirstName(),
                     adopter.getLastName(),
                     adopter.getAddress(),

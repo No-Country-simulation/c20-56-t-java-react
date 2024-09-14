@@ -1,16 +1,18 @@
 package com.nocountry.petadoptapi.service;
 
-import com.nocountry.petadoptapi.dto.ShelterDto;
+import com.nocountry.petadoptapi.requests.ShelterRequest;
 import com.nocountry.petadoptapi.model.Role;
 import com.nocountry.petadoptapi.model.Shelter;
 import com.nocountry.petadoptapi.model.User;
 import com.nocountry.petadoptapi.repository.ShelterRepository;
 import com.nocountry.petadoptapi.repository.UserRepository;
+import com.nocountry.petadoptapi.responses.ShelterResponse;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ShelterService {
@@ -18,15 +20,17 @@ public class ShelterService {
     private final UserRepository userRepository;
     private final UserService userService;
     private final JwtUtil jwtUtil;
+    private final ClassConverter classConverter;
 
-    public ShelterService(ShelterRepository shelterRepository, UserRepository userRepository, UserService userService, JwtUtil jwtUtil) {
+    public ShelterService(ShelterRepository shelterRepository, UserRepository userRepository, UserService userService, JwtUtil jwtUtil, ClassConverter classConverter) {
         this.shelterRepository = shelterRepository;
         this.userRepository = userRepository;
         this.userService = userService;
         this.jwtUtil = jwtUtil;
+        this.classConverter = classConverter;
     }
 
-    public Shelter getShelter() {
+    public Shelter getMyShelter() {
         UserDetails userDetails = userService.getAuthenticatedUser();
         User user = (User) userDetails;
         if (user.getShelterProfile() == null) {
@@ -35,7 +39,18 @@ public class ShelterService {
         return user.getShelterProfile();
     }
 
-    public String saveShelter(ShelterDto shelterDto) {
+    public ShelterResponse getShelterById(Integer id) {
+        Shelter shelter = shelterRepository.findById(id).orElseThrow(() -> new RuntimeException("No shelter found with id " + id));
+        return classConverter.convertToShelterResponse(shelter);
+    }
+
+    public Set<ShelterResponse> getAllShelters() {
+        return shelterRepository.findAll().stream()
+                .map(classConverter::convertToShelterResponse)
+                .collect(Collectors.toSet());
+    }
+
+    public String saveShelter(ShelterRequest shelterRequest) {
         UserDetails userDetails = userService.getAuthenticatedUser();
         User user = (User) userDetails;
 
@@ -44,10 +59,11 @@ public class ShelterService {
         }
 
         Shelter shelter = new Shelter();
-        shelter.setShelterName(shelterDto.shelterName());
-        shelter.setAddress(shelterDto.address());
-        shelter.setContact(shelterDto.contact());
-        shelter.setDescription(shelterDto.description());
+        shelter.setShelterName(shelterRequest.shelterName());
+        shelter.setImage(shelterRequest.image());
+        shelter.setAddress(shelterRequest.address());
+        shelter.setContact(shelterRequest.contact());
+        shelter.setDescription(shelterRequest.description());
         user.setShelterProfile(shelter);
         Set<Role> roles = user.getRoles();
         roles.add(Role.SHELTER);
@@ -57,7 +73,7 @@ public class ShelterService {
         return jwtUtil.generateToken(user);
     }
 
-    public Shelter updateShelter(ShelterDto shelterDto) {
+    public Shelter updateShelter(ShelterRequest shelterRequest) {
         UserDetails userDetails = userService.getAuthenticatedUser();
         User user = (User) userDetails;
         Integer shelterId = user.getShelterProfile().getId();
@@ -69,10 +85,11 @@ public class ShelterService {
         Shelter shelter = shelterRepository.findById(shelterId)
                 .orElseThrow(() -> new IllegalArgumentException("Shelter not found with ID: " + shelterId));
 
-        shelter.setShelterName(shelterDto.shelterName());
-        shelter.setAddress(shelterDto.address());
-        shelter.setContact(shelterDto.contact());
-        shelter.setDescription(shelterDto.description());
+        shelter.setShelterName(shelterRequest.shelterName());
+        shelter.setImage(shelterRequest.image());
+        shelter.setAddress(shelterRequest.address());
+        shelter.setContact(shelterRequest.contact());
+        shelter.setDescription(shelterRequest.description());
 
         return shelterRepository.save(shelter);
     }

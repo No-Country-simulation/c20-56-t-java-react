@@ -3,6 +3,7 @@ package com.nocountry.petadoptapi.model;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -16,7 +17,7 @@ public class Adopter {
     private String address;
     private String contact;
     private String description;
-    @ManyToMany(mappedBy = "interestedAdopters", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "interestedAdopters", fetch = FetchType.EAGER)
     private Set<Pet> wishList = new HashSet<>();
 
     public Adopter() {
@@ -76,5 +77,18 @@ public class Adopter {
 
     public void setWishList(Set<Pet> wishList) {
         this.wishList = wishList;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Adopter adopter = (Adopter) o;
+        return Objects.equals(id, adopter.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
