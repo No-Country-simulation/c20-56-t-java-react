@@ -1,13 +1,14 @@
 package com.nocountry.petadoptapi.controller;
 
 import com.nocountry.petadoptapi.requests.AuthRequest;
-import com.nocountry.petadoptapi.service.JwtUtil;
 import com.nocountry.petadoptapi.service.UserService;
 import com.nocountry.petadoptapi.exceptions.UserAlreadyExistsException;
-import io.jsonwebtoken.Claims;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,11 +17,9 @@ import java.util.Map;
 @RequestMapping("/api")
 public class AuthController {
     private final UserService userService;
-    private final JwtUtil jwtUtil;
 
-    public AuthController(UserService userService, JwtUtil jwtUtil) {
+    public AuthController(UserService userService) {
         this.userService = userService;
-        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping("/register")
@@ -45,18 +44,5 @@ public class AuthController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-    }
-
-    /*
-    * Solo para testeo.
-    * Hay que eliminarlo.
-    */
-    @GetMapping("/claims")
-    public Claims testClaims(@RequestHeader("Authorization") String token) {
-        if (token.startsWith("Bearer ")) {
-            token = token.substring(7);
-        }
-
-        return jwtUtil.extractAllClaims(token);
     }
 }

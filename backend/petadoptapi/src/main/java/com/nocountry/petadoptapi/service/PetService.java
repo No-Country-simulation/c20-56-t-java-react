@@ -1,10 +1,17 @@
 package com.nocountry.petadoptapi.service;
 
-import com.nocountry.petadoptapi.model.*;
-import com.nocountry.petadoptapi.responses.*;
+import com.nocountry.petadoptapi.model.Adopter;
+import com.nocountry.petadoptapi.model.Pet;
+import com.nocountry.petadoptapi.model.Role;
+import com.nocountry.petadoptapi.model.Shelter;
+import com.nocountry.petadoptapi.model.User;
 import com.nocountry.petadoptapi.repository.AdopterRepository;
 import com.nocountry.petadoptapi.repository.PetRepository;
 import com.nocountry.petadoptapi.requests.PetRequest;
+import com.nocountry.petadoptapi.responses.PetAdopterResponse;
+import com.nocountry.petadoptapi.responses.PetResponse;
+import com.nocountry.petadoptapi.responses.PetResponseForAdopters;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +42,7 @@ public class PetService {
         if (activeRole.equals(Role.ADOPTER)) {
             return getPetResponseForAdopters(user.getAdopterProfile());
         }
-        if (activeRole.equals(Role.SHELTER)) {
+        if (activeRole.equals(Role.SHELTER) || activeRole.equals(Role.ADMIN)) {
             return getPetResponseForShelter(user.getShelterProfile());
         }
         return petRepository.findAll().stream()
@@ -58,7 +65,7 @@ public class PetService {
         if (activeRole.equals(Role.ADOPTER)) {
             return classConverter.convertToPetResponseForAdopter(pet, user.getAdopterProfile());
         }
-        if (activeRole.equals(Role.SHELTER)) {
+        if (activeRole.equals(Role.SHELTER) || activeRole.equals(Role.ADMIN)) {
             return classConverter.convertToPetResponseForShelter(pet);
         }
         return classConverter.convertToPetResponse(pet);
@@ -66,7 +73,7 @@ public class PetService {
 
     // Guardar un nuevo pet utilizando un DTO
     public PetResponse savePet(PetRequest petRequest) {
-        Pet pet = classConverter.convertToEntity(petRequest);
+        Pet pet = classConverter.convertToPet(petRequest);
         Pet savedPet = petRepository.save(pet);
         return classConverter.convertToPetResponse(savedPet);
     }
@@ -74,13 +81,13 @@ public class PetService {
     // Actualizar un pet existente por su ID
     public PetResponse updatePet(Integer id, PetRequest petRequest) throws AccessDeniedException {
         Pet existingPet = petRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pet not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Pet not found"));
 
         User user = (User) userService.getAuthenticatedUser();
         Shelter shelter = user.getShelterProfile();
 
         if (shelter == null) {
-            throw new RuntimeException("El usuario no tiene un refugio asignado");
+            throw new EntityNotFoundException("El usuario no tiene un refugio asignado");
         }
 
         if (existingPet.getShelter() == null || !Objects.equals(existingPet.getShelter().getId(), shelter.getId())) {
@@ -90,7 +97,7 @@ public class PetService {
         // Actualizar los campos del pet existente
         existingPet.setName(petRequest.name());
         existingPet.setSpecies(petRequest.species());
-        existingPet.setBreed(petRequest.breed());
+        existingPet.setGender(petRequest.gender());
         existingPet.setAge(petRequest.age());
         existingPet.setColor(petRequest.color());
         existingPet.setSize(petRequest.size());
@@ -104,12 +111,12 @@ public class PetService {
     // Eliminar un pet por su ID
     public void deletePet(Integer id) {
         Pet existingPet = petRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pet not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Pet not found"));
         User user = (User) userService.getAuthenticatedUser();
         Shelter shelter = user.getShelterProfile();
 
         if (shelter == null) {
-            throw new RuntimeException("El usuario no tiene un refugio asignado");
+            throw new EntityNotFoundException("El usuario no tiene un refugio asignado");
         }
 
         if (existingPet.getShelter() == null || !existingPet.getShelter().equals(shelter)) {
@@ -125,10 +132,10 @@ public class PetService {
         Adopter adopter = user.getAdopterProfile();
 
         if (adopter == null) {
-            throw new RuntimeException("El adoptante no tiene un perfil de adoptador.");
+            throw new EntityNotFoundException("El adoptante no tiene un perfil de adoptador.");
         }
 
-        Pet pet = petRepository.findById(id).orElseThrow(() -> new RuntimeException("Pet not found"));
+        Pet pet = petRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Pet not found"));
 
         Set<Pet> wishList = adopter.getWishList();
         Set<Adopter> interestedAdopters = pet.getInterestedAdopters();
@@ -144,12 +151,10 @@ public class PetService {
         adopterRepository.save(adopter);
         petRepository.save(pet);
 
-        PetAdopterResponse response = new PetAdopterResponse(
+        return new PetAdopterResponse(
                 pet.getId(),
                 adopter.getId()
         );
-
-        return response;
     }
 
     public Set<PetResponseForAdopters> getMyWishList() {

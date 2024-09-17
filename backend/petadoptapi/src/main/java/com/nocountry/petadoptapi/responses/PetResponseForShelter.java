@@ -1,15 +1,19 @@
 package com.nocountry.petadoptapi.responses;
 
+import com.nocountry.petadoptapi.model.Gender;
+import com.nocountry.petadoptapi.model.Size;
+import com.nocountry.petadoptapi.model.Species;
+
 import java.util.Set;
 
 public record PetResponseForShelter(
         Integer id,
         String name,
-        String species,
-        String breed,
+        Species species,
+        Gender gender,
         Integer age,
         String color,
-        String size,
+        Size size,
         String image,
         String description,
         Integer numberOfInterestedAdopters,

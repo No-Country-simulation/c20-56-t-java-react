@@ -4,8 +4,15 @@ import com.nocountry.petadoptapi.requests.ShelterRequest;
 import com.nocountry.petadoptapi.model.Shelter;
 import com.nocountry.petadoptapi.responses.ShelterResponse;
 import com.nocountry.petadoptapi.service.ShelterService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,15 +45,23 @@ public class ShelterController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Set<ShelterResponse>> getAllShelters() {
-        Set<ShelterResponse> response = shelterService.getAllShelters();
-        return ResponseEntity.ok().body(response);
+    public ResponseEntity<?> getAllShelters() {
+        try {
+            Set<ShelterResponse> response = shelterService.getAllShelters();
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ShelterResponse> getShelterById(@PathVariable Integer id) {
-        ShelterResponse shelter = shelterService.getShelterById(id);
-        return ResponseEntity.ok().body(shelter);
+    public ResponseEntity<?> getShelterById(@PathVariable Integer id) {
+        try {
+            ShelterResponse shelter = shelterService.getShelterById(id);
+            return ResponseEntity.ok().body(shelter);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
     @PostMapping("/create")
@@ -73,6 +88,16 @@ public class ShelterController {
                     shelter.getDescription()
             );
             return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}/suspend")
+    public ResponseEntity<?> suspendShelter(@PathVariable Integer id) {
+        try {
+            Shelter shelter = shelterService.suspendShelter(id);
+            return ResponseEntity.ok().body(shelter);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

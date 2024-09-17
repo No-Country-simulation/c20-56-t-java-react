@@ -1,6 +1,14 @@
 package com.nocountry.petadoptapi.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -12,11 +20,11 @@ public class Pet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
-    private String species;
-    private String breed;
+    private Species species;
+    private Gender gender;
     private Integer age;
     private String color;
-    private String size;
+    private Size size;
     private String image;
     private String description;
     @ManyToOne
@@ -49,20 +57,20 @@ public class Pet {
         this.name = name;
     }
 
-    public String getSpecies() {
+    public Species getSpecies() {
         return species;
     }
 
-    public void setSpecies(String species) {
+    public void setSpecies(Species species) {
         this.species = species;
     }
 
-    public String getBreed() {
-        return breed;
+    public Gender getGender() {
+        return gender;
     }
 
-    public void setBreed(String breed) {
-        this.breed = breed;
+    public void setGender(Gender gender) {
+        this.gender = gender;
     }
 
     public Integer getAge() {
@@ -81,11 +89,11 @@ public class Pet {
         this.color = color;
     }
 
-    public String getSize() {
+    public Size getSize() {
         return size;
     }
 
-    public void setSize(String size) {
+    public void setSize(Size size) {
         this.size = size;
     }
 

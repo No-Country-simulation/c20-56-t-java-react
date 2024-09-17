@@ -7,6 +7,7 @@ import com.nocountry.petadoptapi.model.User;
 import com.nocountry.petadoptapi.repository.ShelterRepository;
 import com.nocountry.petadoptapi.repository.UserRepository;
 import com.nocountry.petadoptapi.responses.ShelterResponse;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -91,6 +92,17 @@ public class ShelterService {
         shelter.setContact(shelterRequest.contact());
         shelter.setDescription(shelterRequest.description());
 
+        return shelterRepository.save(shelter);
+    }
+
+    public Shelter suspendShelter(Integer id) throws IllegalAccessException {
+        User user = (User) userService.getAuthenticatedUser();
+        if (user.getActiveRole() != Role.ADMIN) {
+            throw new IllegalAccessException("Must be an admin to perform this action.");
+        }
+        Shelter shelter = shelterRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Shelter not found with id " + id));
+        shelter.setEnabled(!shelter.isEnabled()); // Toggle the status
         return shelterRepository.save(shelter);
     }
 }

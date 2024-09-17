@@ -6,7 +6,11 @@ import com.nocountry.petadoptapi.model.Shelter;
 import com.nocountry.petadoptapi.model.User;
 import com.nocountry.petadoptapi.repository.PetRepository;
 import com.nocountry.petadoptapi.requests.PetRequest;
-import com.nocountry.petadoptapi.responses.*;
+import com.nocountry.petadoptapi.responses.AdopterResponse;
+import com.nocountry.petadoptapi.responses.PetResponseForAdopters;
+import com.nocountry.petadoptapi.responses.PetResponseForShelter;
+import com.nocountry.petadoptapi.responses.PetResponseImpl;
+import com.nocountry.petadoptapi.responses.ShelterResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -52,7 +56,7 @@ public class ClassConverter {
                 pet.getId(),
                 pet.getName(),
                 pet.getSpecies(),
-                pet.getBreed(),
+                pet.getGender(),
                 pet.getAge(),
                 pet.getColor(),
                 pet.getSize(),
@@ -68,7 +72,7 @@ public class ClassConverter {
                 pet.getId(),
                 pet.getName(),
                 pet.getSpecies(),
-                pet.getBreed(),
+                pet.getGender(),
                 pet.getAge(),
                 pet.getColor(),
                 pet.getSize(),
@@ -87,7 +91,7 @@ public class ClassConverter {
                 pet.getId(),
                 pet.getName(),
                 pet.getSpecies(),
-                pet.getBreed(),
+                pet.getGender(),
                 pet.getAge(),
                 pet.getColor(),
                 pet.getSize(),
@@ -101,11 +105,11 @@ public class ClassConverter {
     }
 
     // Conversión de DTO a Entity
-    Pet convertToEntity(PetRequest petRequest) {
+    Pet convertToPet(PetRequest petRequest) {
         Pet pet = new Pet();
         pet.setName(petRequest.name());
         pet.setSpecies(petRequest.species());
-        pet.setBreed(petRequest.breed());
+        pet.setGender(petRequest.gender());
         pet.setAge(petRequest.age());
         pet.setColor(petRequest.color());
         pet.setSize(petRequest.size());

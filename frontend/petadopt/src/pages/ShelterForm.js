@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 const ShelterForm = () => {
     const [formData, setFormData] = useState({
         shelterName: '',
+        image: '',
         address: '',
         contact: '',
         description: ''
@@ -60,6 +61,18 @@ const ShelterForm = () => {
                 />
             </div>
             <div className="mb-4">
+                <label htmlFor="image" className="block text-gray-700 font-bold mb-2">Image url:</label>
+                <input
+                    type="text"
+                    id="image"
+                    name="image"
+                    value={formData.image}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                />
+            </div>
+            <div className="mb-4">
                 <label htmlFor="address" className="block text-gray-700 font-bold mb-2">Address:</label>
                 <input
                     type="text"
@@ -98,7 +111,7 @@ const ShelterForm = () => {
             {message && <p className="text-green-500 text-sm mb-4">{message}</p>}
             <button
                 type="submit"
-                className="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-600"
+                className="w-full px-4 py-2 bg-indigo-600 text-white font-medium rounded-md hover:bg-indigo-700 disabled:bg-gray-400"
             >
                 Submit
             </button>

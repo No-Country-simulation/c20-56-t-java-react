@@ -6,6 +6,7 @@ import com.nocountry.petadoptapi.model.Role;
 import com.nocountry.petadoptapi.model.User;
 import com.nocountry.petadoptapi.repository.AdopterRepository;
 import com.nocountry.petadoptapi.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -77,6 +78,17 @@ public class AdopterService {
         adopter.setContact(adopterResponse.contact());
         adopter.setDescription(adopterResponse.description());
 
+        return adopterRepository.save(adopter);
+    }
+
+    public Adopter suspendAdopter(Integer id) throws IllegalAccessException {
+        User user = (User) userService.getAuthenticatedUser();
+        if (user.getActiveRole() != Role.ADMIN) {
+            throw new IllegalAccessException("Must be an admin to perform this action.");
+        }
+        Adopter adopter = adopterRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Adopter not found with id " + id));
+        adopter.setEnabled(!adopter.isEnabled()); // Toggle the status
         return adopterRepository.save(adopter);
     }
 
