@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { createShelter } from '../services/shelterService';
+import React, { useState, useEffect } from 'react';
+import { getAdopter, updateAdopter } from '../services/adopterService';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 
-const ShelterForm = () => {
+const EditAdopterForm = () => {
     const [formData, setFormData] = useState({
-        shelterName: '',
-        image: '',
+        firstName: '',
+        lastName: '',
         address: '',
         contact: '',
         description: ''
@@ -15,6 +15,27 @@ const ShelterForm = () => {
     const [error, setError] = useState('');
     const [message, setMessage] = useState('');
     const navigate = useNavigate();
+
+    // Obtener datos del adoptante al montar el componente
+    useEffect(() => {
+        const fetchAdopterData = async () => {
+            try {
+                const data = await getAdopter();
+                setFormData({
+                    firstName: data.firstName || '',
+                    lastName: data.lastName || '',
+                    address: data.address || '',
+                    contact: data.contact || '',
+                    description: data.description || ''
+                });
+            } catch (error) {
+                setError('Error al obtener los datos del adoptante.');
+                console.error(error);
+            }
+        };
+
+        fetchAdopterData();
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -30,45 +51,36 @@ const ShelterForm = () => {
         setMessage(''); // Limpiar el mensaje de éxito antes de enviar
 
         try {
-            const data = await createShelter(formData);
-            console.log('Respuesta del servidor:', data);
-            
-            // Guardar token
-            if (data.token) {
-                localStorage.setItem('jwt', data.token);
-            }
-            
-            
-            setMessage('Adoptante creado exitosamente'); // Mostrar un mensaje de éxito
-            navigate('/'); // Redirigir al usuario a la página principal
-            window.location.reload();
+            const updatedData = await updateAdopter(formData);
+            setMessage('Datos actualizados exitosamente');
+            navigate('/'); // Redirigir a la página principal
         } catch (error) {
-            setError('Hubo un error al crear el adoptante, por favor intenta nuevamente.');
-            console.error('Error al enviar el formulario:', error);
+            setError('Hubo un error al actualizar el adoptante, por favor intenta nuevamente.');
+            console.error(error);
         }
     };
 
     return (
-        <><Header message="Refugio" />
+        <><Header message="Mis datos" />
         <form onSubmit={handleSubmit} className="max-w-lg mx-auto my-6 p-4 border rounded shadow-lg my-10">
             <div className="mb-4">
-                <label htmlFor="shelterName" className="block text-gray-700 font-bold mb-2">Shelter Name:</label>
+                <label htmlFor="firstName" className="block text-gray-700 font-bold mb-2">First Name:</label>
                 <input
                     type="text"
-                    id="shelterName"
-                    name="shelterName"
-                    value={formData.shelterName}
+                    id="firstName"
+                    name="firstName"
+                    value={formData.firstName}
                     onChange={handleChange}
                     required
                     className="w-full px-3 py-2 border border-gray-300 rounded-md" />
             </div>
             <div className="mb-4">
-                <label htmlFor="image" className="block text-gray-700 font-bold mb-2">Image url:</label>
+                <label htmlFor="lastName" className="block text-gray-700 font-bold mb-2">Last Name:</label>
                 <input
                     type="text"
-                    id="image"
-                    name="image"
-                    value={formData.image}
+                    id="lastName"
+                    name="lastName"
+                    value={formData.lastName}
                     onChange={handleChange}
                     required
                     className="w-full px-3 py-2 border border-gray-300 rounded-md" />
@@ -111,10 +123,10 @@ const ShelterForm = () => {
                 type="submit"
                 className="w-full px-4 py-2 bg-indigo-600 text-white font-medium rounded-md hover:bg-indigo-700 disabled:bg-gray-400"
             >
-                Submit
+                Save Changes
             </button>
         </form></>
     );
 };
 
-export default ShelterForm;
+export default EditAdopterForm;

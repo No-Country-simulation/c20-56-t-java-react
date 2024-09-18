@@ -1,32 +1,14 @@
-// src/pages/Home.js
 import React from 'react';
-import AdminContent from '../components/AdminContent';
-import UserContent from '../components/UserContent';
-import AdopterContent from '../components/AdopterContent';
-import ShelterContent from '../components/ShelterContent';
-import GuestContent from '../components/GuestContent';
+import Header from '../components/Header'
+import CallToAction from '../components/CallToAction'
+import Carousel from '../components/Carousel'
 
-const Home = ({ activeRole }) => {
-  const renderContent = () => {
-    switch (activeRole) {
-      case 'ADMIN':
-        return <AdminContent />;
-      case 'USER':
-        return <UserContent />;
-      case 'ADOPTER':
-        return <AdopterContent />;
-      case 'SHELTER':
-        return <ShelterContent />;
-      default:
-        return <GuestContent />;
-    }
-  };
-
-  return (
-    <div>
-      {renderContent()}  {/* Renderiza el contenido basado en el rol */}
-    </div>
-  );
-};
+const Home = () => (
+  <>
+    <Header message="EL ARCA: adopción de mascotas" />
+    <CallToAction />
+    <Carousel />
+  </>
+);
 
 export default Home;

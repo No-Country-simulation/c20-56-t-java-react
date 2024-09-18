@@ -1,5 +1,4 @@
-// Crear refugio
-
+// Crear perfil de refugio
 export const createShelter = async (shelterData) => {
   const jwt = localStorage.getItem('jwt'); // Obtener el JWT del almacenamiento local
   try {
@@ -25,7 +24,6 @@ export const createShelter = async (shelterData) => {
 };
 
 // Mi refugio
-
 export const getMyShelter = async () => {
   const jwt = localStorage.getItem('jwt');
   try {

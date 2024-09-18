@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { getAllShelters } from '../services/shelterService'; // Asegúrate de importar tu función del servicio
+import { getAllShelters } from '../services/shelterService';
+import Header from '../components/Header';
 
 const Shelters = () => {
   const [shelters, setShelters] = useState([]); // Estado para almacenar los refugios
@@ -39,8 +40,8 @@ const Shelters = () => {
   }
 
   return (
+    <><Header message="Lista de refugios" />
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold text-center text-gray-800 mb-10">Lista de refugios</h1>
       <ul className="space-y-4">
         {shelters.length === 0 ? (
           <p>No hay refugios disponibles.</p> // Si no hay refugios
@@ -70,14 +71,12 @@ const Shelters = () => {
                         src="https://www.svgrepo.com/show/533657/chevron-down-double.svg"
                         alt="Cerrar"
                         className="w-6 h-6"
-                        style={{ transform: 'rotate(180deg)' }}
-                      />
+                        style={{ transform: 'rotate(180deg)' }} />
                     ) : (
                       <img
                         src="https://www.svgrepo.com/show/533657/chevron-down-double.svg"
                         alt="Expandir"
-                        className="w-6 h-6"
-                      />
+                        className="w-6 h-6" />
                     )}
                   </button>
                 </div>
@@ -94,8 +93,7 @@ const Shelters = () => {
                             <img
                               src={pet.image}
                               alt={pet.name}
-                              className="w-20 h-20 object-cover rounded-full mx-auto hover:scale-105 transition-transform"
-                            />
+                              className="w-20 h-20 object-cover rounded-full mx-auto hover:scale-105 transition-transform" />
                           </a>
                           <p className="text-gray-700 mb-1 font-semibold">{pet.name}</p>
                         </li>
@@ -110,7 +108,7 @@ const Shelters = () => {
           ))
         )}
       </ul>
-    </div>
+    </div></>
   );
 };
 

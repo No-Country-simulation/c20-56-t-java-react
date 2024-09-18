@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchPetById, adoptPet } from '../services/petService';
+import Header from '../components/Header';
 
 const PetDetail = () => {
   const { id } = useParams();
@@ -45,16 +46,15 @@ const PetDetail = () => {
   }
 
   return (
-    <div className="min-h-screen">
-      <div className="p-8 flex flex-col items-center justify-center">
-        <h1 className="text-4xl font-bold text-center mb-8">{pet.name}</h1>
+    <><Header message={pet.name} />
+    <div className="px-4 py-8">
+      <div className="flex flex-col items-center justify-center">
         <div className="flex flex-col md:flex-row items-center md:items-start justify-between max-w-4xl w-full mb-8">
           <div className="w-full md:w-1/2 flex justify-center mb-6 md:mb-0">
             <img
               src={pet.image}
               alt={pet.name}
-              className="w-80 h-80 object-cover rounded-lg shadow-lg"
-            />
+              className="w-80 h-80 object-cover rounded-lg shadow-lg" />
           </div>
           <div className="w-full md:w-1/2 text-left space-y-5">
             <p className="text-gray-700"><strong>Especie:</strong> {pet.species === 'DOG' ? 'Perro' : pet.species === 'CAT' ? 'Gato' : pet.species}</p>
@@ -73,14 +73,13 @@ const PetDetail = () => {
         </div>
         <button
           onClick={handleAdopt}
-          className={`max-w-xs px-4 py-2 text-white font-medium rounded-md ${!pet.isOnMyWishlist ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-red-500 hover:bg-red-600'
-            }`}
+          className={`max-w-xs px-4 py-2 text-white font-medium rounded-md ${!pet.isOnMyWishlist ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-red-500 hover:bg-red-600'}`}
         >
           {!pet.isOnMyWishlist ? 'Solicitar adopción' : 'Cancelar solicitud'}
         </button>
 
       </div>
-    </div>
+    </div></>
   );
 };
 

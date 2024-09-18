@@ -1,21 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { fetchAllPets, deletePet } from '../services/petService'; // Importa deletePet
+import { fetchAllPets, deletePet } from '../services/petService';
 import { Link } from 'react-router-dom';
+import Header from '../components/Header';
 
 const AdoptersModal = ({ isOpen, onClose, adopters }) => {
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-5 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold mb-4">Interesados en adoptar</h2>
-        <ul>
-          {adopters.map((adopter, index) => (
-            <li key={index} className="mb-2">
-              {adopter.firstName} {adopter.lastName} - {adopter.contact}
-            </li>
-          ))}
-        </ul>
+      <div className="bg-white p-5 rounded-lg shadow-lg w-11/12 max-w-4xl max-h-[80vh] overflow-y-auto">
+        <table className="table-auto w-full border-collapse border border-gray-300">
+          <thead>
+            <tr className="bg-gray-200">
+              <th className="border px-4 py-2 text-left">Nombre</th>
+              <th className="border px-4 py-2 text-left">Contacto</th>
+              <th className="border px-4 py-2 text-left">Dirección</th>
+            </tr>
+          </thead>
+          <tbody>
+            {adopters.map((adopter, index) => (
+              <tr key={index} className="hover:bg-gray-100">
+                <td className="border px-4 py-2">
+                  <strong>{adopter.firstName} {adopter.lastName}</strong>
+                </td>
+                <td className="border px-4 py-2">{adopter.contact}</td>
+                <td className="border px-4 py-2">{adopter.address}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
         <button
           onClick={onClose}
           className="mt-4 bg-red-500 text-white px-4 py-2 rounded"
@@ -105,14 +118,14 @@ const MyShelterPets = () => {
   }
 
   return (
-    <div className="bg-gray-100 min-h-screen p-8">
-      <h1 className="text-4xl font-bold text-center text-gray-800 mb-10">Mascotas en el refugio</h1>
-      <div className="text-center mb-6">
+    <>
+      <Header message="Mis mascotas" />
+      <div className="text-center py-8">
         <Link to="/pets/create" className="w-full px-4 py-2 bg-indigo-600 text-white font-medium rounded-md hover:bg-indigo-700 disabled:bg-gray-400">
           Agregar mascota
         </Link>
       </div>
-      <div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 px-4 py-8">
         {pets.map((pet) => (
           <div key={pet.id} className="bg-white shadow-md rounded-lg overflow-hidden">
             <img src={pet.image} alt={pet.name} className="w-full h-48 object-cover" />
@@ -151,14 +164,13 @@ const MyShelterPets = () => {
       <AdoptersModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        adopters={currentAdopters}
-      />
+        adopters={currentAdopters} />
       <ConfirmationModal
         isOpen={isConfirmationModalOpen}
         onClose={() => setIsConfirmationModalOpen(false)} // Cierra el modal de confirmación
         onConfirm={confirmDelete} // Ejecuta la confirmación de eliminación
       />
-    </div>
+    </>
   );
 };
 

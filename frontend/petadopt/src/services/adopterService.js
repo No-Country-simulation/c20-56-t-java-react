@@ -1,3 +1,4 @@
+// Crear perfil de adoptante
 export const createAdopter = async (adopterData) => {
   const jwt = localStorage.getItem('jwt'); // Obtener el JWT del almacenamiento local
   try {
@@ -66,29 +67,6 @@ export const updateAdopter = async (adopterData) => {
     return data; // Devolver los datos actualizados al componente que lo llama
   } catch (error) {
     console.error('Error al actualizar el adoptante:', error);
-    throw error; // Propagar el error para que lo maneje el componente
-  }
-};
-
-// Suspender adoptante
-export const suspendAdopter = async (adopterId) => {
-  const jwt = localStorage.getItem('jwt'); // Obtener el JWT del almacenamiento local
-  try {
-    const response = await fetch(`http://localhost:8080/api/adopter/${adopterId}/suspend`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${jwt}`, // Agregar el JWT en el header Authorization
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error('Error al suspender el adoptante');
-    }
-
-    const data = await response.json();
-    return data; // Devolver los datos al componente que lo llama
-  } catch (error) {
-    console.error('Error al suspender el adoptante:', error);
     throw error; // Propagar el error para que lo maneje el componente
   }
 };

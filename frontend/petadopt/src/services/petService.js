@@ -16,20 +16,6 @@ export const fetchAllPets = async (token) => {
   }
 };
 
-// Obtener todas las mascotas del refugio del usuario
-export const fetchAllMyShelterPets = async (token) => {
-  try {
-    const response = await axios.get(`${API_URL}/my-shelter-pets`, {
-      headers: {
-        Authorization: `Bearer ${token}`,  
-      },
-    });
-    return response.data;
-  } catch (error) {
-    throw new Error('Error al obtener las mascotas del refugio');
-  }
-};
-
 // Obtener una mascota por su ID
 export const fetchPetById = async (id, token) => {
   try {
@@ -99,20 +85,6 @@ export const adoptPet = async (id, token) => {
     return response.data;
   } catch (error) {
     throw new Error(`Error al adoptar la mascota: ${error.response ? error.response.data : error.message}`);
-  }
-};
-
-// Obtener la lista de deseos del usuario (wishlist)
-export const fetchMyWishlist = async (token) => {
-  try {
-    const response = await axios.get(`${API_URL}/my-wishlist`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.data;
-  } catch (error) {
-    throw new Error('Error al obtener la lista de deseos');
   }
 };
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchPetById, updatePet } from '../services/petService';
+import Header from '../components/Header';
 
 const PetEditForm = () => {
   const { id } = useParams();
@@ -65,9 +66,9 @@ const PetEditForm = () => {
   if (error) return <p className="text-red-500 text-center">{error}</p>;
 
   return (
-    <div className="min-h-screen">
+    <><Header message="Editar mascota" />
+    <div className="px-4 py-8">
       <div className="max-w-lg mx-auto my-6 p-4 border rounded shadow-lg">
-        <h2 className="text-2xl font-bold text-center mb-4">Actualizar Mascota</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700" htmlFor="name">
@@ -81,8 +82,7 @@ const PetEditForm = () => {
               onChange={handleChange}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
               placeholder="Nombre"
-              required
-            />
+              required />
           </div>
 
           <div className="mb-4">
@@ -133,8 +133,7 @@ const PetEditForm = () => {
               onChange={handleChange}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
               placeholder="Edad"
-              required
-            />
+              required />
           </div>
 
           <div className="mb-4">
@@ -149,8 +148,7 @@ const PetEditForm = () => {
               onChange={handleChange}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
               placeholder="Color"
-              required
-            />
+              required />
           </div>
 
           <div className="mb-4">
@@ -184,8 +182,7 @@ const PetEditForm = () => {
               onChange={handleChange}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
               placeholder="URL de la imagen"
-              required
-            />
+              required />
           </div>
 
           <div className="mb-4">
@@ -200,8 +197,7 @@ const PetEditForm = () => {
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
               placeholder="Descripción"
               required
-              rows={4}
-            />
+              rows={4} />
           </div>
 
           <button type="submit" className="w-full px-4 py-2 bg-indigo-600 text-white font-medium rounded-md hover:bg-indigo-700">
@@ -209,7 +205,7 @@ const PetEditForm = () => {
           </button>
         </form>
       </div>
-    </div>
+    </div></>
   );
 };
 

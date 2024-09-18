@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Importa useNavigate
+import { useNavigate } from 'react-router-dom';
 import { createPet } from '../services/petService';
+import Header from '../components/Header';
 
 const PetCreateForm = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
@@ -14,7 +15,7 @@ const PetCreateForm = ({ onSubmit }) => {
     description: ''
   });
 
-  const navigate = useNavigate(); // Inicializa useNavigate
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,7 +24,7 @@ const PetCreateForm = ({ onSubmit }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem('jwt'); // Obtener el token del localStorage
+    const token = localStorage.getItem('jwt');
 
     if (!token) {
       console.error('Token no disponible.');
@@ -31,10 +32,10 @@ const PetCreateForm = ({ onSubmit }) => {
     }
 
     try {
-      const petRequest = { ...formData, age: parseInt(formData.age) }; // Asegúrate de que 'age' sea un número
-      const response = await createPet(petRequest, token); // Llama a la función createPet
+      const petRequest = { ...formData, age: parseInt(formData.age) };
+      const response = await createPet(petRequest, token);
       console.log('Mascota creada:', response);
-      onSubmit(response); // Llama a la función onSubmit con los datos de la respuesta
+      onSubmit(response);
 
       // Redirige a la página de mascotas después de crearla
       navigate('/pets');
@@ -44,9 +45,9 @@ const PetCreateForm = ({ onSubmit }) => {
   };
 
   return (
-    <div className="min-h-screen">
+    <><Header message="Crear mascota" />
+    <div className="px-4 py-8">
       <div className="max-w-lg mx-auto my-6 p-4 border rounded shadow-lg">
-        <h2 className="text-2xl font-bold text-center mb-4">Crear Mascota</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700" htmlFor="name">
@@ -60,8 +61,7 @@ const PetCreateForm = ({ onSubmit }) => {
               onChange={handleChange}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
               placeholder="Nombre"
-              required
-            />
+              required />
           </div>
 
           {/* Species (DOG, CAT) */}
@@ -135,8 +135,7 @@ const PetCreateForm = ({ onSubmit }) => {
               onChange={handleChange}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
               placeholder="Edad"
-              required
-            />
+              required />
           </div>
 
           <div className="mb-4">
@@ -151,8 +150,7 @@ const PetCreateForm = ({ onSubmit }) => {
               onChange={handleChange}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
               placeholder="Color"
-              required
-            />
+              required />
           </div>
 
           <div className="mb-4">
@@ -167,8 +165,7 @@ const PetCreateForm = ({ onSubmit }) => {
               onChange={handleChange}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
               placeholder="URL de la imagen"
-              required
-            />
+              required />
           </div>
 
           <div className="mb-4">
@@ -183,8 +180,7 @@ const PetCreateForm = ({ onSubmit }) => {
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
               placeholder="Descripción"
               rows={4}
-              required
-            />
+              required />
           </div>
 
           <button type="submit" className="w-full px-4 py-2 bg-indigo-600 text-white font-medium rounded-md hover:bg-indigo-700 disabled:bg-gray-400">
@@ -192,7 +188,7 @@ const PetCreateForm = ({ onSubmit }) => {
           </button>
         </form>
       </div>
-    </div>
+    </div></>
   );
 };
 

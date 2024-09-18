@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { updateShelter, getMyShelter } from '../services/shelterService'; // Asumiendo que ya tienes esta función
+import { updateShelter, getMyShelter } from '../services/shelterService';
 import { useNavigate } from 'react-router-dom';
+import Header from '../components/Header';
 
 const UpdateShelterForm = () => {
     const [formData, setFormData] = useState({
@@ -54,7 +55,7 @@ const UpdateShelterForm = () => {
             console.log('Respuesta del servidor:', data);
 
             setMessage('Refugio actualizado exitosamente'); // Mostrar un mensaje de éxito
-            navigate('/'); // Redirigir al usuario a la página principal
+            navigate('/my-shelter'); // Redirigir al usuario a la página principal
         } catch (error) {
             setError('Hubo un error al actualizar el refugio, por favor intenta nuevamente.');
             console.error('Error al enviar el formulario:', error);
@@ -62,9 +63,11 @@ const UpdateShelterForm = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="max-w-md mx-auto mt-20 mb-20 p-4 bg-white shadow-md rounded">
+        <>
+        <Header message="Editar refugio" />
+        <form onSubmit={handleSubmit} className="max-w-lg mx-auto my-6 p-4 border rounded shadow-lg">
             <div className="mb-4">
-                <label htmlFor="shelterName" className="block text-gray-700 font-bold mb-2">Shelter Name:</label>
+                <label htmlFor="shelterName" className="block text-gray-700 font-bold mb-2">Nombre del refugio:</label>
                 <input
                     type="text"
                     id="shelterName"
@@ -72,11 +75,10 @@ const UpdateShelterForm = () => {
                     value={formData.shelterName}
                     onChange={handleChange}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                />
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md" />
             </div>
             <div className="mb-4">
-                <label htmlFor="image" className="block text-gray-700 font-bold mb-2">Image URL:</label>
+                <label htmlFor="image" className="block text-gray-700 font-bold mb-2">URL de la imagen:</label>
                 <input
                     type="text"
                     id="image"
@@ -84,11 +86,10 @@ const UpdateShelterForm = () => {
                     value={formData.image}
                     onChange={handleChange}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                />
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md" />
             </div>
             <div className="mb-4">
-                <label htmlFor="address" className="block text-gray-700 font-bold mb-2">Address:</label>
+                <label htmlFor="address" className="block text-gray-700 font-bold mb-2">Dirección:</label>
                 <input
                     type="text"
                     id="address"
@@ -96,11 +97,10 @@ const UpdateShelterForm = () => {
                     value={formData.address}
                     onChange={handleChange}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                />
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md" />
             </div>
             <div className="mb-4">
-                <label htmlFor="contact" className="block text-gray-700 font-bold mb-2">Contact:</label>
+                <label htmlFor="contact" className="block text-gray-700 font-bold mb-2">Contacto:</label>
                 <input
                     type="text"
                     id="contact"
@@ -108,19 +108,17 @@ const UpdateShelterForm = () => {
                     value={formData.contact}
                     onChange={handleChange}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                />
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md" />
             </div>
             <div className="mb-4">
-                <label htmlFor="description" className="block text-gray-700 font-bold mb-2">Description:</label>
+                <label htmlFor="description" className="block text-gray-700 font-bold mb-2">Descripción:</label>
                 <textarea
                     id="description"
                     name="description"
                     value={formData.description}
                     onChange={handleChange}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                />
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md" />
             </div>
             {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
             {message && <p className="text-green-500 text-sm mb-4">{message}</p>}
@@ -128,9 +126,10 @@ const UpdateShelterForm = () => {
                 type="submit"
                 className="w-full px-4 py-2 bg-indigo-600 text-white font-medium rounded-md hover:bg-indigo-700 disabled:bg-gray-400"
             >
-                Update Shelter
+                Actualizar datos
             </button>
         </form>
+        </>
     );
 };
 

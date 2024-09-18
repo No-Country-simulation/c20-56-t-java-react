@@ -17,6 +17,8 @@ import { fetchPetById, createPet } from './services/petService'; // Importa tu s
 import './index.css';
 import PetDetail from './pages/PetDetail';
 import UpdateShelterForm from './pages/UpdateShelterForm';
+import MyShelter from './pages/MyShelter';
+import EditAdopterForm from './pages/EditAdopterForm';
 
 const App = () => {
   const [activeRole, setActiveRole] = useState(null);
@@ -55,7 +57,9 @@ const App = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/adopter/register" element={<AdopterForm />} />
         <Route path="/shelter/register" element={<ShelterForm />} />
-        <Route path="/shelter/update" element={<UpdateShelterForm />} />
+        <Route path="/my-shelter" element={<MyShelter />} />
+        <Route path="/adopter/update" element={<EditAdopterForm />} />
+        <Route path="/my-shelter/update" element={<UpdateShelterForm />} />
         <Route path="/pets/:id" element={<PetDetail />} />
         
         {/* Rutas para crear y editar mascotas */}

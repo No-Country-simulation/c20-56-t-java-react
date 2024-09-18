@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';  // Importar Link para la navegación
+import { Link } from 'react-router-dom';
 import { fetchAllPets } from '../services/petService';
+import Header from '../components/Header';
 
 const AllPets = () => {
   const [pets, setPets] = useState([]);
@@ -34,12 +35,11 @@ const AllPets = () => {
   }
 
   return (
-    <div className="bg-gray-100 min-h-screen p-8">
-      <h1 className="text-4xl font-bold text-center text-gray-800 mb-10">Mascotas en Adopción</h1>
-      <div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <><Header message="Mascotas en adopción" />
+      <div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 px-4 py-8">
         {pets.map((pet) => (
-          <div 
-            key={pet.id} 
+          <div
+            key={pet.id}
             className={`bg-white shadow-md rounded-lg overflow-hidden ${pet.isOnMyWishlist ? 'border-4 border-green-500' : ''}`}
           >
             <img src={pet.image} alt={pet.name} className="w-full h-48 object-cover" />
@@ -57,8 +57,7 @@ const AllPets = () => {
             </div>
           </div>
         ))}
-      </div>
-    </div>
+      </div></>
   );
 };
 
