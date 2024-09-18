@@ -5,7 +5,6 @@ import com.nocountry.petadoptapi.responses.AdopterResponse;
 import com.nocountry.petadoptapi.service.AdopterService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -65,16 +64,6 @@ public class AdopterController {
                     adopter.getDescription()
             );
             return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
-    @PutMapping("/{id}/suspend")
-    public ResponseEntity<?> suspendAdopter(@PathVariable Integer id) {
-        try {
-            Adopter adopter = adopterService.suspendAdopter(id);
-            return ResponseEntity.ok().body(adopter);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

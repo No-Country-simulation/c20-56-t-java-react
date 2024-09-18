@@ -54,16 +54,6 @@ public class ShelterController {
         }
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getShelterById(@PathVariable Integer id) {
-        try {
-            ShelterResponse shelter = shelterService.getShelterById(id);
-            return ResponseEntity.ok().body(shelter);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
-    }
-
     @PostMapping("/create")
     public ResponseEntity<?> createShelter(@RequestBody ShelterRequest shelterRequest) {
         try {
@@ -88,16 +78,6 @@ public class ShelterController {
                     shelter.getDescription()
             );
             return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
-    @PutMapping("/{id}/suspend")
-    public ResponseEntity<?> suspendShelter(@PathVariable Integer id) {
-        try {
-            Shelter shelter = shelterService.suspendShelter(id);
-            return ResponseEntity.ok().body(shelter);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

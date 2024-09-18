@@ -80,25 +80,4 @@ public class AdopterService {
 
         return adopterRepository.save(adopter);
     }
-
-    public Adopter suspendAdopter(Integer id) throws IllegalAccessException {
-        User user = (User) userService.getAuthenticatedUser();
-        if (user.getActiveRole() != Role.ADMIN) {
-            throw new IllegalAccessException("Must be an admin to perform this action.");
-        }
-        Adopter adopter = adopterRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Adopter not found with id " + id));
-        adopter.setEnabled(!adopter.isEnabled()); // Toggle the status
-        return adopterRepository.save(adopter);
-    }
-
-    private AdopterResponse convertToAdopterResponse(Adopter adopter) {
-        return new AdopterResponse(
-                adopter.getFirstName(),
-                adopter.getLastName(),
-                adopter.getAddress(),
-                adopter.getContact(),
-                adopter.getDescription()
-        );
-    }
 }

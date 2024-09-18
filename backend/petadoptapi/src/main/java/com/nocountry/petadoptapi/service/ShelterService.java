@@ -94,15 +94,4 @@ public class ShelterService {
 
         return shelterRepository.save(shelter);
     }
-
-    public Shelter suspendShelter(Integer id) throws IllegalAccessException {
-        User user = (User) userService.getAuthenticatedUser();
-        if (user.getActiveRole() != Role.ADMIN) {
-            throw new IllegalAccessException("Must be an admin to perform this action.");
-        }
-        Shelter shelter = shelterRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Shelter not found with id " + id));
-        shelter.setEnabled(!shelter.isEnabled()); // Toggle the status
-        return shelterRepository.save(shelter);
-    }
 }

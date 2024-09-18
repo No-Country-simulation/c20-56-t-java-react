@@ -157,15 +157,6 @@ public class PetService {
         );
     }
 
-    public Set<PetResponseForAdopters> getMyWishList() {
-        User user = (User) userService.getAuthenticatedUser();
-        Adopter adopter = user.getAdopterProfile();
-        Set<Pet> pets = petRepository.findAllByAdopterWishList(user.getAdopterProfile().getId());
-        return pets.stream()
-                .map(pet -> classConverter.convertToPetResponseForAdopter(pet, adopter))
-                .collect(Collectors.toSet());
-    }
-
     // Trae todas las mascotas en el formato adecuado para adoptantes
     public Set<PetResponse> getPetResponseForAdopters(Adopter adopter) {
         return petRepository.findAll().stream()
